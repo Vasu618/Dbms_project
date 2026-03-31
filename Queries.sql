@@ -1,68 +1,82 @@
 USE airline_db;
+
+-- Show all users
 SELECT * FROM USERS;
 
+-- Show all flights
 SELECT * FROM FLIGHT;
 
-SELECT * 
+-- Flights from Delhi to Mumbai
+SELECT *
 FROM FLIGHT
 WHERE SOURCE = 'Delhi' AND DESTINATION = 'Mumbai';
 
-SELECT * 
+-- Tickets booked by user 
+SELECT *
 FROM TICKET
 WHERE USER_ID = 1;
 
+-- Show all payments
 SELECT * FROM PAYMENT;
 
+-- Flight with airline name
 SELECT F.FLIGHT_NO, F.SOURCE, F.DESTINATION, A.AIRLINE_NAME
 FROM FLIGHT F
 JOIN AIRLINE A ON F.AIRLINE_ID = A.AIRLINE_ID;
 
+-- Ticket with user details
 SELECT T.PNR_NO, U.F_NAME, U.L_NAME, T.SEAT_NO
 FROM TICKET T
 JOIN USERS U ON T.USER_ID = U.USER_ID;
 
+-- Ticket with class type
 SELECT T.PNR_NO, C.CLASS_TYPE, T.SEAT_NO
 FROM TICKET T
 JOIN CLASS C ON T.CLASS_ID = C.CLASS_ID;
 
-SELECT 
-    U.F_NAME,
-    F.FLIGHT_NO,
-    F.SOURCE,
-    F.DESTINATION,
-    C.CLASS_TYPE,
-    T.SEAT_NO,
-    P.AMOUNT
+-- Complete booking details
+SELECT U.F_NAME,
+       F.FLIGHT_NO,
+       F.SOURCE,
+       F.DESTINATION,
+       C.CLASS_TYPE,
+       T.SEAT_NO,
+       P.AMOUNT
 FROM TICKET T
 JOIN USERS U ON T.USER_ID = U.USER_ID
 JOIN FLIGHT F ON T.FLIGHT_NO = F.FLIGHT_NO
 JOIN CLASS C ON T.CLASS_ID = C.CLASS_ID
 JOIN PAYMENT P ON T.PNR_NO = P.PNR_NO;
 
+-- Total number of tickets
 SELECT COUNT(*) AS TOTAL_TICKETS
 FROM TICKET;
 
+-- Total revenue
 SELECT SUM(AMOUNT) AS TOTAL_REVENUE
 FROM PAYMENT;
 
+-- Number of tickets per flight
 SELECT FLIGHT_NO, COUNT(*) AS TOTAL_TICKETS
 FROM TICKET
-GROUP BY FLIGHT_NO
+GROUP BY FLIGHT_NO;
 
+-- Users with more than one booking
 SELECT USER_ID, COUNT(*) AS BOOKINGS
 FROM TICKET
 GROUP BY USER_ID
 HAVING COUNT(*) > 1;
 
-SELECT * 
+-- Flights with no bookings
+SELECT *
 FROM FLIGHT
 WHERE FLIGHT_NO NOT IN (
     SELECT FLIGHT_NO FROM TICKET
 );
 
+-- Highest payment transaction
 SELECT *
 FROM PAYMENT
 WHERE AMOUNT = (
     SELECT MAX(AMOUNT) FROM PAYMENT
 );
-
